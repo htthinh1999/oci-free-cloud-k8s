@@ -15,5 +15,4 @@ spec:
         - editor
         - admin
         - auditor
-        - owner
       team: admin
