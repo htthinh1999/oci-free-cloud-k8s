@@ -10,7 +10,7 @@ spec:
   endpoint_url: ""
   redirect_url: https://teleport.keycodemon.org/v1/webapi/github/callback
   teams_to_roles:
-    - organization: keycodemon-acme
+    - organization: keycodemon
       roles:
         - editor
         - admin
