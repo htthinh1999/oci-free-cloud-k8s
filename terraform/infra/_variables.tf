@@ -7,7 +7,7 @@ variable "region" {
   description = "OCI region"
   type        = string
 
-  default = "eu-frankfurt-1"
+  default = "ap-singapore-1"
 }
 
 variable "ssh_public_key" {
@@ -22,12 +22,12 @@ variable "kubernetes_version" {
   description = "Version of Kubernetes"
   type        = string
 
-  default = "v1.33.1"
+  default = "v1.36.1"
 }
 
 variable "kubernetes_worker_nodes" {
   description = "Worker node count"
   type        = number
 
-  default = 2
+  default = 1
 }

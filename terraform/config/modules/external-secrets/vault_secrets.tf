@@ -31,7 +31,7 @@ spec:
   provider:
     oracle:
       vault: ${var.vault_id}
-      region: eu-frankfurt-1
+      region: ${var.region}
       auth:
         user: ${oci_identity_user.external_secrets.id}
         tenancy: ${var.tenancy_id}

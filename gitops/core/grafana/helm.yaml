@@ -29,8 +29,8 @@ spec:
     grafana.ini:
       app_mode: production
       server:
-        domain: monitoring.nce.wtf
-        root_url: https://monitoring.nce.wtf
+        domain: monitoring.keycodemon.org
+        root_url: https://monitoring.keycodemon.org
 
       users:
         allow_sign_up: false
@@ -48,10 +48,10 @@ spec:
         ;empty_scopes: false
         email_attribute_path: email
         ;id_token_attribute_name:
-        auth_url: https://login.nce.wtf/dex/auth
-        token_url: https://login.nce.wtf/dex/token
-        api_url: https://login.nce.wtf/dex/userinfo
-        role_attribute_path: contains(groups[*], 'nce-acme:admin') && 'Admin' || 'Viewer'
+        auth_url: https://login.keycodemon.org/dex/auth
+        token_url: https://login.keycodemon.org/dex/token
+        api_url: https://login.keycodemon.org/dex/userinfo
+        role_attribute_path: contains(groups[*], 'keycodemon-acme:admin') && 'Admin' || 'Viewer'
 
     extraSecretMounts:
       - name: dex-grafana-client

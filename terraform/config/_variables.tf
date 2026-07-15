@@ -7,7 +7,7 @@ variable "region" {
   description = "OCI region"
   type        = string
 
-  default = "eu-frankfurt-1"
+  default = "ap-singapore-1"
 }
 
 variable "public_subnet_id" {

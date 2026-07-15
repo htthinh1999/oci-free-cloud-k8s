@@ -62,16 +62,6 @@ resource "oci_containerengine_node_pool" "k8s_node_pool" {
       subnet_id           = oci_core_subnet.vcn_private_subnet.id
     }
 
-    placement_configs {
-      availability_domain = data.oci_identity_availability_domains.ads.availability_domains[1].name
-      subnet_id           = oci_core_subnet.vcn_private_subnet.id
-    }
-
-    placement_configs {
-      availability_domain = data.oci_identity_availability_domains.ads.availability_domains[2].name
-      subnet_id           = oci_core_subnet.vcn_private_subnet.id
-    }
-
     size = var.kubernetes_worker_nodes
   }
 
@@ -85,7 +75,7 @@ resource "oci_containerengine_node_pool" "k8s_node_pool" {
     image_id    = jsondecode(data.jq_query.latest_image.result)
     source_type = "image"
 
-    boot_volume_size_in_gbs = 100
+    boot_volume_size_in_gbs = 200
   }
   initial_node_labels {
     key   = "name"

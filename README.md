@@ -70,7 +70,6 @@ This repo hosts my personal stuff and is a playground for my kubernetes tooling.
 - [ ] Loki for log aggregation
 - [x] Metrics Server for cpu/mem usage overview
 - [ ] Kyverno and Image Signing
-- [x] [S3 Proxy](https://github.com/oxyno-zeta/s3-proxy) for http access of buckets
 
 # :keyboard: Setup
 > [!Note]
@@ -97,7 +96,7 @@ With the bucket created we can configure the `~/.oci/config`:
 user=ocid1.user.xxx
 fingerprint=ee:f4:xxx
 tenancy=ocid1.tenancy.oc1.xxx
-region=eu-frankfurt-1
+region=ap-singapore-1
 key_file=/Users/xxxx.pem
 
 [default]
@@ -199,13 +198,13 @@ kubernetes.
 ❯ k --kubeconfig ~/.kube/oci.kubeconfig exec -n teleport -ti deployment/teleport-cluster-auth -- tctl users reset nce
 
 # login to teleport
-❯ tsh login --proxy teleport.nce.wtf:443 --auth=local --user nce teleport.nce.wt
+❯ tsh login --proxy teleport.keycodemon.org:443 --auth=local --user nce teleport.keycodemon.org
 ```
 
 ### Login via Github
 There's no user management in teleport, so no reset, or 2FA setup is needed.
 ```
-❯ tsh login --proxy teleport.nce.wtf:443 --auth=github-acme --user nce teleport.nce.wtf
+❯ tsh login --proxy teleport.keycodemon.org:443 --auth=github-acme --user nce teleport.keycodemon.org
 
 # login to the k8s cluster
 ❯ tsh kube login oci

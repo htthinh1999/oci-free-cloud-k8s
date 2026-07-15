@@ -6,7 +6,7 @@ variable "gh_token" {
 variable "gh_org" {
   type = string
 
-  default = "nce"
+  default = "htthinh1999"
 }
 
 variable "gh_repository" {
@@ -44,7 +44,7 @@ variable "git_url" {
   type        = string
   nullable    = false
 
-  default = "https://github.com/nce/oci-free-cloud-k8s.git"
+  default = "https://github.com/htthinh1999/oci-free-cloud-k8s.git"
 }
 
 variable "flux_version" {
