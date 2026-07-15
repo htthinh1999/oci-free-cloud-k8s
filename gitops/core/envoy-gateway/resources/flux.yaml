@@ -1,14 +1,13 @@
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: dex
+  name: envoy-gateway-resources
   namespace: flux-system
 spec:
   interval: 1h
-  path: ./gitops/core/dex
+  path: ./gitops/core/envoy-gateway/resources/
   prune: true
   dependsOn:
-    - name: external-secrets
     - name: envoy-gateway
   sourceRef:
     kind: GitRepository

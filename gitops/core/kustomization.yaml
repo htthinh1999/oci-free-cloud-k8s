@@ -14,3 +14,4 @@ resources:
   - metrics-server/flux.yaml
   - fluxcd-addons/flux.yaml
   - envoy-gateway/flux.yaml
+  - envoy-gateway/resources/flux.yaml
