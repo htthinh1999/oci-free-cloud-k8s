@@ -29,3 +29,10 @@ spec:
       defaultClassReplicaCount: 1
     ingress:
       enabled: false
+    csi:
+      attacherReplicaCount: 1
+      provisionerReplicaCount: 1
+      resizerReplicaCount: 1
+      snapshotterReplicaCount: 1
+    longhornUI:
+      replicas: 1
