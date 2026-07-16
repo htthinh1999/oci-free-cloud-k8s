@@ -14,10 +14,11 @@ the last part (DNS) from oci to cloudflare.
 
 Oracle Kubernetes Engine (OKE) is free to use, and you only pay for worker
 nodes _if_ you exceed the Always Free tier — which we don’t.
-The free tier provides **2 oCPUs and 12GB of memory**, which are split between two
-worker nodes (`VM.Standard.A1.Flex`), allowing for efficient resource
-utilization. Each node has a 100GB boot volume, with around 60GB available for
-in-cluster storage via Longhorn. For ingress, we use the `GatewayAPI` implementation
+The free tier provides **2 oCPUs and 12GB of memory** on `VM.Standard.A1.Flex` shapes.
+My setup runs this as a single worker node (some regions only expose one availability
+domain, so spreading across two nodes isn't always an option) with a 200GB boot volume —
+the max allowed under the Always Free block storage limit — with a good chunk of that
+available for in-cluster storage via Longhorn. For ingress, we use the `GatewayAPI` implementation
 provided by envoy-gateway together with Oracle’s
 Flexible Load Balancer (10Mbps; layer 7). For `teleport` we use the network LB (layer 4).
 In this configuration both load balancers are free to use.
@@ -54,7 +55,6 @@ This repo hosts my personal stuff and is a playground for my kubernetes tooling.
   * with letsencrypt setup for cloudflare dns challenge
 - [x] External DNS
   * with sync to the cloudflare dns management
-  * CR to provide `A` records for my home-network
 - [x] Dex as OIDC Provider
   * with github as idP
 - [x] FluxCD for Gitops
@@ -198,13 +198,13 @@ kubernetes.
 ❯ k --kubeconfig ~/.kube/oci.kubeconfig exec -n teleport -ti deployment/teleport-cluster-auth -- tctl users reset nce
 
 # login to teleport
-❯ tsh login --proxy teleport.keycodemon.org:443 --auth=local --user nce teleport.keycodemon.org
+❯ tsh login --proxy teleport.keycodemon.org:443 --auth=local --user htthinh1999 teleport.keycodemon.org
 ```
 
 ### Login via Github
 There's no user management in teleport, so no reset, or 2FA setup is needed.
 ```
-❯ tsh login --proxy teleport.keycodemon.org:443 --auth=github-acme --user nce teleport.keycodemon.org
+❯ tsh login --proxy teleport.keycodemon.org:443 --auth=github-acme --user htthinh1999 teleport.keycodemon.org
 
 # login to the k8s cluster
 ❯ tsh kube login oci
