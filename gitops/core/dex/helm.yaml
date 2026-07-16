@@ -33,7 +33,7 @@ spec:
           name: dex-grafana-client
       - secretRef:
           name: dex-envoy-client
-    replicaCount: 2
+    replicaCount: 1
     https:
       enabled: false
     ingress:
