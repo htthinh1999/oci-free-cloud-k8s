@@ -33,6 +33,8 @@ spec:
           name: dex-grafana-client
       - secretRef:
           name: dex-envoy-client
+      - secretRef:
+          name: dex-workos-client
     replicaCount: 1
     https:
       enabled: false
@@ -71,6 +73,11 @@ spec:
           secretEnv: grafana.client-secret
           redirectURIs:
             - https://monitoring.keycodemon.org/login/generic_oauth
+        - name: WorkOS
+          IDEnv: workos.client-id
+          secretEnv: workos.client-secret
+          redirectURIs:
+            - https://auth.workos.com/sso/oidc/ZDISxxgoF4aWaRWUGCOGdrEbn/callback
       connectors:
         - type: github
           # Required field for connector id.
