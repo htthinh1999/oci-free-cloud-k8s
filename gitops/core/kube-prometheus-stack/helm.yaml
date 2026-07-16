@@ -86,12 +86,12 @@ spec:
     alertmanager:
       alertmanagerSpec:
         volumes:
-          - name: slack-webhook
+          - name: telegram-bot-token
             secret:
-              secretName: alertmanager-slack-webhook
+              secretName: alertmanager-telegram-bot-token
         volumeMounts:
-          - name: slack-webhook
-            mountPath: /etc/slack-webhook
+          - name: telegram-bot-token
+            mountPath: /etc/telegram-bot-token
             readOnly: true
       config:
         inhibit_rules:
@@ -106,25 +106,24 @@ spec:
           group_wait: 30s
           group_interval: 5m
           repeat_interval: 12h
-          receiver: "slack"
+          receiver: "telegram"
           routes:
             - receiver: "null"
               matchers:
                 - alertname =~ "InfoInhibitor|Watchdog"
         receivers:
           - name: "null"
-          - name: "slack"
-            slack_configs:
+          - name: "telegram"
+            telegram_configs:
               - send_resolved: true
-                channel: "#monitoring"
-                username: alertmanager
-                api_url_file: /etc/slack-webhook/url
-                title: ":rotating_light: *{{ .CommonLabels.alertname }}:* {{ .CommonAnnotations.summary }}"
-                icon_emoji: ":fire:"
-                text: |
+                chat_id: 1270578204
+                bot_token_file: /etc/telegram-bot-token/token
+                parse_mode: "Markdown"
+                message: |
+                  🚨 *{{ .CommonLabels.alertname }}*
                   *Status:* {{ .Status }}
                   *Severity:* {{ .CommonLabels.severity }}
                   *Instance:* {{ .CommonLabels.pod }}
                   *Summary:* {{ .CommonAnnotations.summary }}
                   *Description:* {{ .CommonAnnotations.description }}
-                  [🔍 View in Grafana](https://monitoring.klangregen.de/alerting/list?search=state:firing)
+                  [🔍 View in Grafana](https://monitoring.keycodemon.org/alerting/list?search=state:firing)
