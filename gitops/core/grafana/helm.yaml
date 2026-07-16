@@ -51,7 +51,7 @@ spec:
         auth_url: https://login.keycodemon.org/dex/auth
         token_url: https://login.keycodemon.org/dex/token
         api_url: https://login.keycodemon.org/dex/userinfo
-        role_attribute_path: contains(groups[*], 'keycodemon:admin') && 'Admin' || 'Viewer'
+        role_attribute_path: contains(groups[*], 'KeycodeMon:admin') && 'Admin' || 'Viewer'
 
     extraSecretMounts:
       - name: dex-grafana-client
