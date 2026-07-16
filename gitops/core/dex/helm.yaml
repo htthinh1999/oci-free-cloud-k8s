@@ -89,6 +89,11 @@ spec:
             clientID: $GITHUB_CLIENT_ID
             clientSecret: $GITHUB_CLIENT_SECRET
             redirectURI: https://login.keycodemon.org/dex/callback
+            # Prefer the @keycodemon.org email over the GitHub account's primary
+            # email, so WorkOS custom-domain SSO gets a matching address. Falls
+            # back to the primary email if no @keycodemon.org address is verified
+            # on the GitHub account.
+            preferredEmailDomain: keycodemon.org
             orgs:
               - name: KeycodeMon
                 # A white list of teams. Only include group claims for these teams.
