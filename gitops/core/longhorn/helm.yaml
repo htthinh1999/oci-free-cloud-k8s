@@ -26,6 +26,6 @@ spec:
     defaultSettings:
       storageMinimalAvailablePercentage: 10
     persistence:
-      defaultClassReplicaCount: 2
+      defaultClassReplicaCount: 1
     ingress:
       enabled: false
