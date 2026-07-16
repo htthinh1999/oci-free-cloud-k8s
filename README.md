@@ -52,7 +52,8 @@ This repo hosts my personal stuff and is a playground for my kubernetes tooling.
   * teleport svc on a layer 4 lb
   * `httproutes` with oidc protection
 - [x] Certmanager
-  * with letsencrypt setup for cloudflare dns challenge
+  * Cloudflare Origin CA (via `origin-ca-issuer`) for everything behind envoy-gateway
+  * Let's Encrypt (dns01 via cloudflare) for Teleport, which can't be Cloudflare-proxied
 - [x] External DNS
   * with sync to the cloudflare dns management
 - [x] Dex as OIDC Provider
@@ -214,11 +215,29 @@ There's no user management in teleport, so no reset, or 2FA setup is needed.
 ```
 
 ### Certificates
-The x509 certs are managed by `cert-manager`. With the dns management done by
-cloudflare, i've removed all `http01` challenges. The renewal process with
-`http01` and cloudflare is [out of the box not possible][cert-manager-cloudflare]
+Two separate issuers are in play here, both managed by `cert-manager`:
 
-Switching to `dns` challenge solves this issue.
+* **Everything behind envoy-gateway** (Grafana, Dex, Prometheus, Longhorn UI, the flux webhook) uses a
+  wildcard cert (`*.keycodemon.org`) issued via [Cloudflare Origin CA][cloudflare-origin-ca], through the
+  [`origin-ca-issuer`](./gitops/core/origin-ca-issuer) controller (`OriginIssuer` CRD, not a `ClusterIssuer`
+  — this project doesn't ship a cluster-scoped variant). This requires the DNS records for these hosts to
+  be Cloudflare-*proxied* (orange-cloud); `external-dns` sets this via the
+  `external-dns.alpha.kubernetes.io/cloudflare-proxied: "true"` annotation on each `HTTPRoute`.
+  Heads up: external-dns reliably applies the proxied flag when it first *creates* a record, but not always
+  when *updating* an existing one — if a record doesn't flip to proxied after adding the annotation, just
+  delete it in the Cloudflare dashboard and let `policy: sync` recreate it fresh.
+* **Teleport** stays on the original `letsencrypt` `ClusterIssuer` (`dns01` challenge via Cloudflare's API)
+  and its DNS record stays *unproxied* (grey-cloud) — deliberately. Origin CA certs are only trusted by
+  Cloudflare's edge, so the hostname would need to be proxied, but Teleport multiplexes several protocols
+  (SSH, Kubernetes API, web) over a single TLS port via ALPN, which requires TLS to terminate directly at
+  the Teleport proxy. Cloudflare's free tier only proxies HTTP(S) (it terminates TLS itself and re-proxies
+  plain HTTP), which would break that multiplexing. Only the paid [Spectrum][cloudflare-spectrum] product
+  does raw TCP passthrough that would actually work here, which is out of scope for a "free tier" setup —
+  so Teleport keeps its own Let's Encrypt cert.
+
+With the dns management done by cloudflare, i've removed all `http01` challenges for the letsencrypt
+issuer — the renewal process with `http01` and cloudflare is [out of the box not possible][cert-manager-cloudflare].
+Switching to `dns01` solves this issue.
 
 ### Known Issues
 ```
@@ -285,6 +304,8 @@ A collection of relevant upstream documentation for reference
 [nginx-helm-lb-annotations]: https://github.com/kubernetes/ingress-nginx/blob/74ce7b057e8d4ac96d2e11e027930397e5f70010/charts/ingress-nginx/templates/controller-service.yaml#L7
 [cert-manager-dns-challenge]: https://cert-manager.io/docs/configuration/acme/dns01/
 [cert-manager-cloudflare]: https://ryanschiang.com/cloudflare-letsencrypt-http-01
+[cloudflare-origin-ca]: https://developers.cloudflare.com/ssl/origin-configuration/origin-ca/
+[cloudflare-spectrum]: https://developers.cloudflare.com/spectrum/
 
 [secrets-templating]: https://external-secrets.io/v0.15.0/guides/templating/#helm
 
