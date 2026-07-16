@@ -6,6 +6,7 @@ spec:
   dnsNames:
     - "*.keycodemon.org"
   issuerRef:
-    name: letsencrypt
-    kind: ClusterIssuer
+    group: cert-manager.k8s.cloudflare.com
+    kind: OriginIssuer
+    name: cloudflare-origin-ca
   secretName: wildcard-keycodemon-org-tls-cert

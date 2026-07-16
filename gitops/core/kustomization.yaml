@@ -6,6 +6,7 @@ resources:
   - external-dns/flux.yaml
   - cert-manager/flux.yaml
   - cert-manager/issuer/flux.yaml
+  - origin-ca-issuer/flux.yaml
   - dex/flux.yaml
   - grafana/flux.yaml
   - longhorn/flux.yaml

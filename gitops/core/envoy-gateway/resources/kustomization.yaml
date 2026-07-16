@@ -5,3 +5,4 @@ resources:
   - envoyproxy.yaml
   - gateway.yaml
   - certificate.yaml
+  - origin-issuer.yaml

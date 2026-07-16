@@ -1,0 +1,34 @@
+apiVersion: external-secrets.io/v1
+kind: ExternalSecret
+metadata:
+  name: cloudflare-origin-ca-token
+spec:
+  refreshInterval: 3m
+  secretStoreRef:
+    kind: ClusterSecretStore
+    name: oracle-vault
+  target:
+    name: cloudflare-origin-ca-token
+    creationPolicy: Owner
+    deletionPolicy: Delete
+    template:
+      engineVersion: v2
+      data:
+        key: "{{ .token }}"
+  data:
+    - secretKey: token
+      remoteRef:
+        key: cloudflare-origin-ca-token
+        version: CURRENT
+        decodingStrategy: None
+---
+apiVersion: cert-manager.k8s.cloudflare.com/v1
+kind: OriginIssuer
+metadata:
+  name: cloudflare-origin-ca
+spec:
+  requestType: OriginECC
+  auth:
+    tokenRef:
+      name: cloudflare-origin-ca-token
+      key: key
