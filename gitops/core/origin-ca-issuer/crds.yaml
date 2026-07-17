@@ -27,6 +27,7 @@ spec:
     - name: v1
       schema:
         openAPIV3Schema:
+          type: object
           description: |-
             An OriginIssuer represents the Cloudflare Origin CA as an external cert-manager issuer.
             It is scoped to a single namespace, so it can be used only by resources in the same
@@ -198,6 +199,7 @@ spec:
     - name: v1
       schema:
         openAPIV3Schema:
+          type: object
           description: |-
             A ClusterOriginIssuer represents the Cloudflare Origin CA as an external cert-manager issuer.
             It is scoped to a single namespace, so it can be used only by resources in the same
