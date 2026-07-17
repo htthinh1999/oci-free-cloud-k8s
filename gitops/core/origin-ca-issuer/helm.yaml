@@ -16,10 +16,9 @@ metadata:
 spec:
   interval: 10m
   timeout: 5m
-  install:
-    crds: Create
-  upgrade:
-    crds: CreateReplace
+  # NOTE: this chart does not ship a `crds/` directory, so there is nothing for
+  # Flux's install.crds/upgrade.crds to manage here - the CRDs are applied
+  # directly as plain manifests in crds.yaml instead. See the comment there.
   chart:
     spec:
       chart: origin-ca-issuer
