@@ -11,10 +11,10 @@ spec:
 apiVersion: notification.toolkit.fluxcd.io/v1beta3
 kind: Provider
 metadata:
-  name: slack
+  name: telegram
 spec:
-  type: slack
-  channel: G2T1UTYCW
-  address: https://slack.com/api/chat.postMessage
+  type: telegram
+  # Same chat as the Alertmanager Telegram receiver (kube-prometheus-stack/helm.yaml).
+  channel: "1270578204"
   secretRef:
-    name: fluxcd-slack-webhook
+    name: fluxcd-telegram-bot-token

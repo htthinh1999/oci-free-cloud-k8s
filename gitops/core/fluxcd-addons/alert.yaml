@@ -14,10 +14,10 @@ spec:
 apiVersion: notification.toolkit.fluxcd.io/v1beta3
 kind: Alert
 metadata:
-  name: slack-alert
+  name: telegram-alert
 spec:
   providerRef:
-    name: slack
+    name: telegram
   eventSeverity: error
   eventSources:
     - kind: GitRepository
