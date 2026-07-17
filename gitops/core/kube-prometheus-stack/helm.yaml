@@ -119,11 +119,22 @@ spec:
                 chat_id: 1270578204
                 bot_token_file: /etc/telegram-bot-token/token
                 parse_mode: "Markdown"
-                message: |
-                  🚨 *{{ .CommonLabels.alertname }}*
-                  *Status:* {{ .Status }}
-                  *Severity:* {{ .CommonLabels.severity }}
-                  *Instance:* {{ .CommonLabels.pod }}
-                  *Summary:* {{ .CommonAnnotations.summary }}
-                  *Description:* {{ .CommonAnnotations.description }}
+                # Ranges over .Alerts.Firing/.Resolved per-alert instead of using
+                # .CommonLabels/.CommonAnnotations - those are only populated with
+                # fields shared by every alert in the group, so with group_by just
+                # ["namespace"] a group holding two different alerts would render
+                # blank pod/summary/description. This also lets firing and resolved
+                # alerts show up distinctly in the same notification.
+                message: |-
+                  {{ if eq .Status "firing" }}🔥{{ else }}✅{{ end }} *{{ .CommonLabels.namespace }}* — {{ len .Alerts.Firing }} firing{{ if gt (len .Alerts.Resolved) 0 }}, {{ len .Alerts.Resolved }} resolved{{ end }}
+                  {{ range .Alerts.Firing }}
+                  {{ if eq .Labels.severity "critical" }}🔴{{ else if eq .Labels.severity "warning" }}🟠{{ else }}ℹ️{{ end }} *{{ .Labels.alertname }}*
+                  *Severity:* {{ .Labels.severity }}
+                  {{ if .Labels.pod }}*Pod:* {{ .Labels.pod }}
+                  {{ end }}*Summary:* {{ .Annotations.summary }}
+                  *Description:* {{ .Annotations.description }}
+                  *Since:* {{ .StartsAt.Format "2006-01-02 15:04 MST" }}
+                  {{ end }}{{ range .Alerts.Resolved }}
+                  ✅ *{{ .Labels.alertname }}* resolved (was firing for {{ .EndsAt.Sub .StartsAt }})
+                  {{ end }}
                   [🔍 View in Grafana](https://monitoring.keycodemon.org/alerting/list?search=state:firing)
