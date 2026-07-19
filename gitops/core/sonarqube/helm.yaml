@@ -86,8 +86,19 @@ spec:
     # the scanner API with a plain SonarQube analysis token, which an OIDC
     # login wall in front of the HTTPRoute would block. Auth is SonarQube's
     # own login + per-project tokens (same trust model as SonarCloud).
+    #
+    # Without an explicit resources override, this hook job inherits the
+    # top-level .Values.resources (300m/1536M) for a one-shot curl loop,
+    # which the node has no spare CPU for. Give it a tiny footprint instead.
     setAdminPassword:
       passwordSecretName: sonarqube-secrets
+      resources:
+        requests:
+          cpu: 25m
+          memory: 64M
+        limits:
+          cpu: 100m
+          memory: 128M
 
     monitoringPasscodeSecretName: sonarqube-secrets
     monitoringPasscodeSecretKey: monitoring-passcode
