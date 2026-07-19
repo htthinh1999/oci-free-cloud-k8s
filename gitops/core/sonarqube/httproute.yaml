@@ -21,8 +21,8 @@ spec:
       # single small node, and the CI scanner was seeing the connection
       # reset (RST_STREAM) mid-transfer as a result. Give it much more room.
       timeouts:
-        request: 300s
-        backendRequest: 300s
+        request: 900s
+        backendRequest: 900s
       backendRefs:
         - name: sonarqube-sonarqube
           port: 9000
