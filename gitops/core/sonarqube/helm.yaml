@@ -74,7 +74,7 @@ spec:
 
     resources:
       requests:
-        cpu: 300m
+        cpu: 100m
         memory: 1536M
         ephemeral-storage: 512M
       limits:
@@ -88,7 +88,7 @@ spec:
     # own login + per-project tokens (same trust model as SonarCloud).
     #
     # Without an explicit resources override, this hook job inherits the
-    # top-level .Values.resources (300m/1536M) for a one-shot curl loop,
+    # top-level .Values.resources (100m/1536M) for a one-shot curl loop,
     # which the node has no spare CPU for. Give it a tiny footprint instead.
     setAdminPassword:
       passwordSecretName: sonarqube-secrets
