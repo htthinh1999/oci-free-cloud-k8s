@@ -32,6 +32,14 @@ spec:
     community:
       enabled: true
 
+    # The chart's default image.repository ("sonarqube") is an unqualified
+    # short name. OKE's CRI-O runtime enforces fully-qualified image
+    # references and refuses to guess the registry, failing with "short name
+    # mode is enforcing, but image name ... returns ambiguous list". Pin the
+    # registry explicitly to fix it.
+    image:
+      repository: docker.io/library/sonarqube
+
     # We handle exposure ourselves via httproute.yaml (envoy-gateway Gateway API),
     # same convention as every other component in gitops/core.
     httproute:
