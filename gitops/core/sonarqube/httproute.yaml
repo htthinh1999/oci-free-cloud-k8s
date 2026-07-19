@@ -15,6 +15,14 @@ spec:
         - path:
             type: PathPrefix
             value: "/"
+      # Envoy's default per-route timeout is 15s. The scanner engine/JRE
+      # download endpoints (/api/v2/analysis/*) plus SonarQube's own
+      # analysis report upload can easily take longer than that on this
+      # single small node, and the CI scanner was seeing the connection
+      # reset (RST_STREAM) mid-transfer as a result. Give it much more room.
+      timeouts:
+        request: 300s
+        backendRequest: 300s
       backendRefs:
         - name: sonarqube-sonarqube
           port: 9000
