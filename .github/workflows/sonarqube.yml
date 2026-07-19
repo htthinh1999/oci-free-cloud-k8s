@@ -19,6 +19,18 @@ jobs:
         with:
           fetch-depth: 0
 
+      # The scanner normally auto-downloads its own JRE from the SonarQube
+      # server (/api/v2/analysis/jres). On our single tiny free-tier node
+      # that transfer gets reset mid-stream (RST_STREAM) instead of
+      # completing, so we skip server-side JRE provisioning (see
+      # sonar.scanner.skipJreProvisioning in sonar-project.properties) and
+      # bring our own JRE instead.
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+
       - name: SonarQube Scan
         uses: SonarSource/sonarqube-scan-action@v8
         env:
