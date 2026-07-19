@@ -1,0 +1,26 @@
+name: SonarQube Scan
+
+# Community Build has no branch analysis / PR decoration, so this just
+# re-analyzes the main branch on every push to it, plus a manual trigger.
+# PRs still get a local scan run (useful in the Actions log) but no
+# inline annotations - that requires Developer Edition or SonarQube Cloud.
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  sonarqube:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: SonarQube Scan
+        uses: SonarSource/sonarqube-scan-action@v8
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: https://sonarqube.keycodemon.org
