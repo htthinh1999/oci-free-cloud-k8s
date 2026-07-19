@@ -16,3 +16,4 @@ resources:
   - fluxcd-addons/flux.yaml
   - envoy-gateway/flux.yaml
   - envoy-gateway/resources/flux.yaml
+  - sonarqube/flux.yaml

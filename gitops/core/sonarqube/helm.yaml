@@ -1,0 +1,85 @@
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: HelmRepository
+metadata:
+  name: sonarqube
+  namespace: sonarqube
+spec:
+  interval: 5m
+  url: https://SonarSource.github.io/helm-chart-sonarqube
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: sonarqube
+  namespace: sonarqube
+spec:
+  interval: 10m
+  timeout: 10m
+  targetNamespace: sonarqube
+  chart:
+    spec:
+      chart: sonarqube
+      version: '2026.3.1'
+      sourceRef:
+        kind: HelmRepository
+        name: sonarqube
+      interval: 5m
+  releaseName: sonarqube
+  values:
+    # Community Build image, no license required. Uses the bundled H2 database
+    # (single-user personal setup, low scan volume) instead of an in-cluster
+    # postgres - keeps the footprint on the free-tier node as small as possible.
+    community:
+      enabled: true
+
+    # We handle exposure ourselves via httproute.yaml (envoy-gateway Gateway API),
+    # same convention as every other component in gitops/core.
+    httproute:
+      enabled: false
+    ingress:
+      enabled: false
+
+    persistence:
+      enabled: true
+      storageClass: longhorn
+      size: 5Gi
+
+    # Required host tuning for the bundled Elasticsearch (search) process.
+    # Runs as a privileged initContainer - fine on this single-node cluster,
+    # no restricted PodSecurity label on the sonarqube namespace.
+    initSysctl:
+      enabled: true
+
+    # This cluster only has 2 oCPU / 12GB total, already shared with
+    # Prometheus/Grafana/Longhorn/Dex/Teleport/etc. SonarQube's chart defaults
+    # (6Gi limit, ~5GB of combined JVM heap) do not fit. Trim the three JVM
+    # processes (web/ce/search) and the pod's resources down to the minimum
+    # workable for a personal, low-volume setup. Expect to revisit if scans
+    # get OOMKilled or take too long.
+    env:
+      - name: SONAR_WEB_JAVAOPTS
+        value: "-Xmx512m -Xms128m"
+      - name: SONAR_CE_JAVAOPTS
+        value: "-Xmx512m -Xms128m"
+      - name: SONAR_SEARCH_JAVAOPTS
+        value: "-Xmx512m -Xms512m"
+
+    resources:
+      requests:
+        cpu: 300m
+        memory: 1536M
+        ephemeral-storage: 512M
+      limits:
+        cpu: 1200m
+        memory: 2560M
+        ephemeral-storage: 2048M
+
+    # Public HTTPS, no OIDC gate: GitHub-hosted Actions runners need to reach
+    # the scanner API with a plain SonarQube analysis token, which an OIDC
+    # login wall in front of the HTTPRoute would block. Auth is SonarQube's
+    # own login + per-project tokens (same trust model as SonarCloud).
+    setAdminPassword:
+      passwordSecretName: sonarqube-secrets
+
+    monitoringPasscodeSecretName: sonarqube-secrets
+    monitoringPasscodeSecretKey: monitoring-passcode
