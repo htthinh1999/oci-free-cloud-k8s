@@ -44,3 +44,29 @@ spec:
       snapshotterReplicaCount: 1
     longhornUI:
       replicas: 1
+      # No resources block previously - real usage (~2Mi observed) was
+      # unaccounted for. Best-effort key (follows the `longhornUI.*` prefix
+      # already used above) - not verified against the chart's values.yaml
+      # (network-blocked from the sandbox that authored this).
+      resources:
+        requests:
+          cpu: 5m
+          memory: 32Mi
+        limits:
+          memory: 64Mi
+    longhornManager:
+      # No resources block previously - real usage (~185Mi observed) was
+      # unaccounted for. Best-effort key, same caveat as longhornUI above.
+      resources:
+        requests:
+          cpu: 10m
+          memory: 224Mi
+        limits:
+          memory: 448Mi
+    # NOTE: deliberately not attempting the CSI sidecar containers
+    # (csi-attacher/provisioner/resizer/snapshotter, 3 replicas each,
+    # longhorn-csi-plugin, driver-deployer - collectively ~230Mi more real
+    # usage, currently unaccounted). I have no confident basis for their
+    # value paths in this chart version and didn't want to add keys that
+    # silently no-op. Check `helm show values longhorn/longhorn --version
+    # 1.11.1` if you want those covered too.

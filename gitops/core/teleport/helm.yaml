@@ -50,8 +50,30 @@ spec:
         issuerKind: ClusterIssuer
     operator:
       enabled: true
+      # No resources block previously - real usage (~61Mi observed) was
+      # unaccounted for. Best-effort key (`operator.*` prefix already used
+      # above) - not verified against the chart's values.yaml (network-
+      # blocked from the sandbox that authored this). Confirm with
+      # `helm show values teleport-cluster --version 18.7.5` before relying
+      # on this.
+      resources:
+        requests:
+          cpu: 10m
+          memory: 96Mi
+        limits:
+          memory: 192Mi
     ingress:
       enabled: false
+    # Best-effort: the chart appears to template a single "teleport" container
+    # for both the auth and proxy Deployments, so a shared top-level
+    # `resources` key most likely applies to both (real usage ~77Mi auth /
+    # ~58Mi proxy). Not verified - same caveat as operator.resources above.
+    resources:
+      requests:
+        cpu: 10m
+        memory: 96Mi
+      limits:
+        memory: 192Mi
     proxy:
       highAvailability:
         replicaCount: 1
