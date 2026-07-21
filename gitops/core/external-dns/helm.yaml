@@ -45,9 +45,10 @@ spec:
       - --exclude-target-net=10.0.0.0/8
     # No resources block previously - the pod's real usage (~110Mi observed) was
     # unaccounted for, giving a false picture of node headroom. Sized from that.
+    # CPU trimmed to 5m - actual usage is ~1m.
     resources:
       requests:
-        cpu: 10m
+        cpu: 5m
         memory: 128Mi
       limits:
         memory: 256Mi

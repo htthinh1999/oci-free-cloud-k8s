@@ -68,10 +68,11 @@ spec:
 
     # No resources block previously - the pod's real usage (main container
     # ~160Mi, each sidecar ~70Mi observed) was unaccounted for on the node.
-    # Sized from that observed usage plus headroom.
+    # Sized from that observed usage plus headroom. CPU trimmed - actual usage
+    # is ~4m for grafana, ~1m per sidecar.
     resources:
       requests:
-        cpu: 50m
+        cpu: 10m
         memory: 256Mi
       limits:
         memory: 512Mi
@@ -86,7 +87,7 @@ spec:
         searchNamespace: grafana
       resources:
         requests:
-          cpu: 10m
+          cpu: 5m
           memory: 96Mi
         limits:
           memory: 192Mi

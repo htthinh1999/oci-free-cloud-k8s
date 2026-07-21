@@ -31,10 +31,11 @@ spec:
   values:
     controller:
       # Observed usage is ~61Mi, right against the old 64Mi limit (OOM-kill risk).
-      # Bump both request and limit to give real headroom.
+      # Bump both request and limit to give real headroom. CPU trimmed to 5m -
+      # actual usage is ~1m.
       resources:
         requests:
-          cpu: 10m
+          cpu: 5m
           memory: 48Mi
         limits:
           memory: 96Mi

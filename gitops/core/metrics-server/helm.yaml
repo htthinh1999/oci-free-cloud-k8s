@@ -27,7 +27,7 @@ spec:
     # Trim to reclaim CPU/memory headroom for other workloads.
     resources:
       requests:
-        cpu: 50m
+        cpu: 20m
         memory: 100Mi
       limits:
         memory: 200Mi

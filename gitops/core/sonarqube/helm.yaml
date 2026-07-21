@@ -72,14 +72,14 @@ spec:
       - name: SONAR_SEARCH_JAVAOPTS
         value: "-Xmx512m -Xms512m"
 
-    # CPU request trimmed from 100m to 50m - observed usage is ~9m, so 100m was
+    # CPU request trimmed from 100m to 20m - observed usage is ~9m, so 100m was
     # reserving far more scheduling headroom than this pod ever uses. Memory
     # request bumped from 1536M to 1792M because observed usage (~1.8Gi) was
     # already above the old request - the pod was quietly using more memory
     # than it had reserved, which understated real node commitment.
     resources:
       requests:
-        cpu: 50m
+        cpu: 20m
         memory: 1792M
         ephemeral-storage: 512M
       limits:
@@ -99,7 +99,7 @@ spec:
       passwordSecretName: sonarqube-secrets
       resources:
         requests:
-          cpu: 25m
+          cpu: 10m
           memory: 64M
         limits:
           cpu: 100m

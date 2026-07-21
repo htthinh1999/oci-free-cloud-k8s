@@ -12,3 +12,15 @@ spec:
           service.beta.kubernetes.io/oci-load-balancer-shape: flexible
           service.beta.kubernetes.io/oci-load-balancer-shape-flex-max: "10"
           service.beta.kubernetes.io/oci-load-balancer-shape-flex-min: "10"
+      # Envoy Gateway's chart default (100m CPU / 512Mi memory) was set outside
+      # this repo's HelmRelease values - observed usage is ~2m CPU. Trim via the
+      # EnvoyProxy CRD (verified against the live CRD schema: spec.provider.
+      # kubernetes.envoyDeployment.container.resources).
+      envoyDeployment:
+        container:
+          resources:
+            requests:
+              cpu: 10m
+              memory: 128Mi
+            limits:
+              memory: 256Mi

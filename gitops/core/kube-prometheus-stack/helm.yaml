@@ -44,10 +44,14 @@ spec:
         # No resources block previously (chart default is unset), even though
         # this is the heaviest real consumer on the node (~90m CPU / ~590Mi
         # observed with a 14GB TSDB). Sized from that with headroom for
-        # compaction spikes.
+        # compaction spikes. NOTE: CPU request (90m) intentionally left close
+        # to observed usage, unlike the other components in this repo trimmed
+        # to near-zero - Prometheus routinely uses this much, so requesting
+        # less would just misrepresent what it needs and make it a preferred
+        # eviction target under node memory pressure.
         resources:
           requests:
-            cpu: 100m
+            cpu: 90m
             memory: 768Mi
           limits:
             memory: 1536Mi
@@ -95,35 +99,37 @@ spec:
       forceDeployDatasources: true
     # kube-state-metrics, the prometheus-operator controller, and node-exporter
     # (subcharts of this chart) had no resources block, so their real usage
-    # (~70Mi, ~45Mi, ~20Mi observed respectively) was unaccounted for.
+    # (~70Mi, ~45Mi, ~20Mi observed respectively) was unaccounted for. CPU
+    # trimmed to 5m each - actual usage is ~1-2m.
     kube-state-metrics:
       resources:
         requests:
-          cpu: 10m
+          cpu: 5m
           memory: 128Mi
         limits:
           memory: 256Mi
     prometheusOperator:
       resources:
         requests:
-          cpu: 10m
+          cpu: 5m
           memory: 64Mi
         limits:
           memory: 128Mi
     prometheus-node-exporter:
       resources:
         requests:
-          cpu: 10m
+          cpu: 5m
           memory: 32Mi
         limits:
           memory: 64Mi
     alertmanager:
       alertmanagerSpec:
         # Chart default only sets a 200Mi memory request (no CPU, no limit).
-        # Add both so this is fully accounted for and bounded.
+        # Add both so this is fully accounted for and bounded. CPU trimmed to
+        # 5m - actual usage is ~1m.
         resources:
           requests:
-            cpu: 10m
+            cpu: 5m
             memory: 200Mi
           limits:
             memory: 256Mi
