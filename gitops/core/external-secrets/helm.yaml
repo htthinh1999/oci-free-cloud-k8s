@@ -29,3 +29,27 @@ spec:
         name: external-secrets
       interval: 5m
   releaseName: external-secrets
+  values:
+    # None of the three deployments (controller/webhook/cert-controller) had a
+    # resources block, so their real memory usage (~30-70Mi each observed) was
+    # unaccounted for on the node. Sized from that observed usage plus headroom.
+    resources:
+      requests:
+        cpu: 20m
+        memory: 96Mi
+      limits:
+        memory: 192Mi
+    webhook:
+      resources:
+        requests:
+          cpu: 10m
+          memory: 64Mi
+        limits:
+          memory: 128Mi
+    certController:
+      resources:
+        requests:
+          cpu: 10m
+          memory: 96Mi
+        limits:
+          memory: 192Mi

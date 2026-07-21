@@ -24,3 +24,27 @@ spec:
   releaseName: cert-manager
   values:
     installCRDs: true
+    # None of the three controllers had a resources block, so they were invisible
+    # to the scheduler's CPU/memory accounting while still consuming real memory
+    # (~50-60Mi each observed). Sized from that observed usage plus headroom, not
+    # the chart's defaults (which set nothing).
+    resources:
+      requests:
+        cpu: 10m
+        memory: 64Mi
+      limits:
+        memory: 128Mi
+    webhook:
+      resources:
+        requests:
+          cpu: 10m
+          memory: 32Mi
+        limits:
+          memory: 64Mi
+    cainjector:
+      resources:
+        requests:
+          cpu: 10m
+          memory: 64Mi
+        limits:
+          memory: 128Mi

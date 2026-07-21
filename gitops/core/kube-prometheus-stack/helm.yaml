@@ -41,6 +41,16 @@ spec:
             app.kubernetes.io/component: monitoring
         retention: ""
         retentionSize: 14GB
+        # No resources block previously (chart default is unset), even though
+        # this is the heaviest real consumer on the node (~90m CPU / ~590Mi
+        # observed with a 14GB TSDB). Sized from that with headroom for
+        # compaction spikes.
+        resources:
+          requests:
+            cpu: 100m
+            memory: 768Mi
+          limits:
+            memory: 1536Mi
         storageSpec:
           volumeClaimTemplate:
             spec:
@@ -83,8 +93,40 @@ spec:
       forceDeployDashboards: true
       namespaceOverride: grafana
       forceDeployDatasources: true
+    # kube-state-metrics, the prometheus-operator controller, and node-exporter
+    # (subcharts of this chart) had no resources block, so their real usage
+    # (~70Mi, ~45Mi, ~20Mi observed respectively) was unaccounted for.
+    kube-state-metrics:
+      resources:
+        requests:
+          cpu: 10m
+          memory: 128Mi
+        limits:
+          memory: 256Mi
+    prometheusOperator:
+      resources:
+        requests:
+          cpu: 10m
+          memory: 64Mi
+        limits:
+          memory: 128Mi
+    prometheus-node-exporter:
+      resources:
+        requests:
+          cpu: 10m
+          memory: 32Mi
+        limits:
+          memory: 64Mi
     alertmanager:
       alertmanagerSpec:
+        # Chart default only sets a 200Mi memory request (no CPU, no limit).
+        # Add both so this is fully accounted for and bounded.
+        resources:
+          requests:
+            cpu: 10m
+            memory: 200Mi
+          limits:
+            memory: 256Mi
         volumes:
           - name: telegram-bot-token
             secret:

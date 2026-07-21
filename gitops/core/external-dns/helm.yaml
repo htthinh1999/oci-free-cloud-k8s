@@ -43,3 +43,11 @@ spec:
             key: apiKey
     extraArgs:
       - --exclude-target-net=10.0.0.0/8
+    # No resources block previously - the pod's real usage (~110Mi observed) was
+    # unaccounted for, giving a false picture of node headroom. Sized from that.
+    resources:
+      requests:
+        cpu: 10m
+        memory: 128Mi
+      limits:
+        memory: 256Mi

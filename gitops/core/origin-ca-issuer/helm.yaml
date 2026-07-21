@@ -30,9 +30,11 @@ spec:
   releaseName: origin-ca-issuer
   values:
     controller:
+      # Observed usage is ~61Mi, right against the old 64Mi limit (OOM-kill risk).
+      # Bump both request and limit to give real headroom.
       resources:
         requests:
           cpu: 10m
-          memory: 32Mi
+          memory: 48Mi
         limits:
-          memory: 64Mi
+          memory: 96Mi

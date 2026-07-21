@@ -22,3 +22,12 @@ spec:
         name: metrics-server
       interval: 5m
   releaseName: metrics-server
+  values:
+    # Chart default requests 100m CPU / 200Mi memory; observed usage is ~3m/35Mi.
+    # Trim to reclaim CPU/memory headroom for other workloads.
+    resources:
+      requests:
+        cpu: 50m
+        memory: 100Mi
+      limits:
+        memory: 200Mi

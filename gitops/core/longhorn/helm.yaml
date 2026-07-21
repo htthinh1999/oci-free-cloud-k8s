@@ -25,6 +25,12 @@ spec:
   values:
     defaultSettings:
       storageMinimalAvailablePercentage: 10
+      # Longhorn reserves CPU for its per-node instance-manager pod as a
+      # percentage of allocatable (default 12%, ~220m on this node's 1830m
+      # allocatable) regardless of actual volume traffic. This is a
+      # single-replica, low-throughput personal setup, so cut the reservation
+      # to free up scheduling headroom for other workloads.
+      guaranteedInstanceManagerCPU: 6
     persistence:
       defaultClassReplicaCount: 1
     ingress:

@@ -36,6 +36,14 @@ spec:
       - secretRef:
           name: dex-workos-client
     replicaCount: 1
+    # No resources block previously - real usage (~10Mi observed) was unaccounted
+    # for on the node. Sized from that observed usage plus headroom.
+    resources:
+      requests:
+        cpu: 10m
+        memory: 32Mi
+      limits:
+        memory: 64Mi
     https:
       enabled: false
     ingress:
