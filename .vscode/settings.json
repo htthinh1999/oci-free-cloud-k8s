@@ -1,0 +1,6 @@
+{
+    "sonarlint.connectedMode.project": {
+        "connectionId": "https-sonarqube-keycodemon-org",
+        "projectKey": "htthinh1999_oci-free-cloud-k8s_450a287e-11d2-40b7-8ebb-126f1cbf6fd8"
+    }
+}
