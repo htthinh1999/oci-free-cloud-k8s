@@ -17,3 +17,6 @@ resources:
   - envoy-gateway/flux.yaml
   - envoy-gateway/resources/flux.yaml
   - sonarqube/flux.yaml
+  - cloudnative-pg/flux.yaml
+  - wattvn-postgres/flux.yaml
+  - wattvn-api/flux.yaml

@@ -1,0 +1,34 @@
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: HelmRepository
+metadata:
+  name: wattvn-api
+  namespace: wattvn-api
+spec:
+  interval: 5m
+  type: oci
+  url: oci://ghcr.io/htthinh1999/charts
+  secretRef:
+    name: ghcr-pull-secret
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: wattvn-api
+  namespace: wattvn-api
+spec:
+  interval: 10m
+  timeout: 5m
+  chart:
+    spec:
+      chart: wattvn-api
+      version: '0.1.0' # bumped manually when Chart.yaml's version changes
+      sourceRef:
+        kind: HelmRepository
+        name: wattvn-api
+      interval: 5m
+  releaseName: wattvn-api
+  values:
+    image:
+      tag: '1' # bumped manually per push - matches the run-number tag from
+        # docker-publish.yml. Flux Image Automation is a deliberate later
+        # follow-up, not wired in here.

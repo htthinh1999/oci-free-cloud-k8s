@@ -1,0 +1,25 @@
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: wattvn-postgres
+  namespace: wattvn-postgres
+spec:
+  instances: 1
+
+  storage:
+    storageClass: longhorn
+    size: 2Gi
+
+  bootstrap:
+    initdb:
+      database: wattvn
+      owner: wattvn
+      secret:
+        name: wattvn-postgres-app-user
+
+  resources:
+    requests:
+      cpu: 10m
+      memory: 128Mi
+    limits:
+      memory: 256Mi
