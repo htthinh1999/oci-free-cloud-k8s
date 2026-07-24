@@ -1,0 +1,19 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: wattvn-api
+  namespace: wattvn-api
+  labels:
+    # Required for kube-prometheus-stack's Prometheus to pick this up - confirmed
+    # live against the cluster's Prometheus object
+    # (spec.serviceMonitorSelector.matchLabels).
+    release: kube-prometheus-stack
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: wattvn-api
+      app.kubernetes.io/instance: wattvn-api
+  endpoints:
+    - port: http
+      path: /metrics
+      interval: 30s

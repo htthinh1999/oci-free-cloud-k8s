@@ -6,3 +6,4 @@ resources:
   - secret.yaml
   - helm.yaml
   - httproute.yaml
+  - servicemonitor.yaml
