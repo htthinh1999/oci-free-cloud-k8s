@@ -21,7 +21,7 @@ spec:
   chart:
     spec:
       chart: wattvn-api
-      version: '0.2.0' # bumped manually when Chart.yaml's version changes
+      version: '0.2.1' # bumped manually when Chart.yaml's version changes
       sourceRef:
         kind: HelmRepository
         name: wattvn-api
