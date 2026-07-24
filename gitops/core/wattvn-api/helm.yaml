@@ -29,6 +29,6 @@ spec:
   releaseName: wattvn-api
   values:
     image:
-      tag: '1' # bumped manually per push - matches the run-number tag from
+      tag: '4' # bumped manually per push - matches the run-number tag from
         # docker-publish.yml. Flux Image Automation is a deliberate later
         # follow-up, not wired in here.
