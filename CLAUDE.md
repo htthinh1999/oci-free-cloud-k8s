@@ -19,6 +19,10 @@ existing patterns rather than introduce new tooling or abstractions.
 * `gitops/core/` — one directory per component, reconciled by FluxCD (not `terraform apply`).
   Editing files under `gitops/` changes cluster state only after Flux reconciles from git —
   there's no local "build" step to run.
+* `nuc/` — plain Kubernetes manifests for a **separate cluster**: a home NUC running microk8s,
+  unrelated to the OKE cluster above and not touched by this repo's Flux instance at all (it only
+  watches `gitops/core`). Apply by hand: `kubectl --context=nuc-tailscale apply -f nuc/<name>/`.
+  Kept here purely for version history/reproducibility, not for reconciliation.
 
 These two Terraform roots and the gitops tree are intentionally decoupled (separate state files,
 separate providers) to keep runs fast and avoid provider coupling. Never merge them.

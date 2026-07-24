@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: evn-proxy-nginx-conf
+  namespace: evn-proxy
+data:
+  default.conf: |
+    server {
+      listen 80;
+      server_name _;
+
+      location / {
+        proxy_pass https://cskh-api.cpc.vn;
+        # Required for a name-based HTTPS backend: without an explicit Host
+        # header and SNI, upstream TLS routing/vhost matching can behave
+        # unpredictably.
+        proxy_set_header Host cskh-api.cpc.vn;
+        proxy_ssl_server_name on;
+        proxy_ssl_name cskh-api.cpc.vn;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+      }
+    }
