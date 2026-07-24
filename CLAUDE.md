@@ -61,7 +61,7 @@ terraform plan
 terraform apply
 ```
 
-There are no application tests, linters beyond `pre-commit`, or CI workflows in this repo.
+There are no application tests. Linting is `pre-commit` for repo conventions, plus a SonarQube scan (`.github/workflows/sonarqube.yml`) of the infra code itself — the generic scanner is the right choice here (unlike in `wattvn`) since this repo has no C#/compiled code, just Terraform and YAML.
 
 ### Terraform specifics
 
@@ -85,3 +85,24 @@ There are no application tests, linters beyond `pre-commit`, or CI workflows in 
 * Secrets are never committed in plaintext — they're pulled from the OCI Vault via
   `ExternalSecret`/`ClusterSecretStore` (`secret.yaml` in each component), or passed through
   Terraform variables backed by untracked `*.tfvars` files.
+
+## Before pushing / finishing a session
+
+Check SonarQube before considering a push or a session done:
+
+1. **Before pushing**, run the `sonarqube` MCP tool `analyze_file_list` (SonarQube for IDE's
+  local engine — no push/CI round-trip needed) on every file you changed. Fix anything real
+  it flags, same as step 4 below. It won't know about hotspots already triaged on the server
+  (they'll still show up locally — expected, not a regression).
+2. Push, then wait for the `SonarQube Scan` GitHub Actions run on that commit to finish.
+3. Query the `sonarqube` MCP tools for project key
+  `htthinh1999_oci-free-cloud-k8s_450a287e-11d2-40b7-8ebb-126f1cbf6fd8`:
+  `get_project_quality_gate_status`, `search_sonar_issues_in_projects`
+  (`issueStatuses: [OPEN, CONFIRMED]`), `search_security_hotspots`.
+4. Fix every OPEN issue with a real change, then re-validate as appropriate
+  (`kubectl kustomize <dir>`, `terraform validate`, `yamlfmt`) before treating it as fixed.
+5. Triage every security hotspot explicitly via `change_security_hotspot_status`
+  (`FIXED` / `SAFE` / `ACKNOWLEDGED`, with a comment explaining the reasoning) — never leave
+  one at `TO_REVIEW`.
+6. Push any fixes and repeat from step 2 until the quality gate is `OK`, zero open issues,
+  and no un-triaged hotspots remain.
