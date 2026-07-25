@@ -1,0 +1,24 @@
+apiVersion: image.toolkit.fluxcd.io/v1
+kind: ImageRepository
+metadata:
+  name: wattvn-api
+  namespace: wattvn-api
+spec:
+  image: ghcr.io/htthinh1999/wattvn-api
+  interval: 5m
+  secretRef:
+    name: ghcr-pull-secret
+---
+apiVersion: image.toolkit.fluxcd.io/v1
+kind: ImagePolicy
+metadata:
+  name: wattvn-api
+  namespace: wattvn-api
+spec:
+  imageRepositoryRef:
+    name: wattvn-api
+  policy:
+    numerical:
+      order: asc
+  filterTags:
+    pattern: '^[0-9]+$'

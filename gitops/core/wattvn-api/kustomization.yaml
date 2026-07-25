@@ -5,5 +5,6 @@ resources:
   - namespace.yaml
   - secret.yaml
   - helm.yaml
+  - image-policy.yaml
   - httproute.yaml
   - servicemonitor.yaml
