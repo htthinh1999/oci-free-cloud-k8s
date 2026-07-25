@@ -55,3 +55,6 @@ Sessionx.vim
 tags
 # Persistent undo
 [._]*.un~
+
+# Superpowers skill scratch (progress ledger, task briefs, review packages)
+.superpowers/
