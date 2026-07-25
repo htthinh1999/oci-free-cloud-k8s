@@ -9,4 +9,3 @@ resources:
   - alert.yaml
   - podmonitor.yaml
   - httproute.yaml
-  - image-update-automation.yaml

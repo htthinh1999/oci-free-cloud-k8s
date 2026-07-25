@@ -2,12 +2,13 @@ apiVersion: image.toolkit.fluxcd.io/v1
 kind: ImageUpdateAutomation
 metadata:
   name: wattvn-api
-  namespace: flux-system
+  namespace: wattvn-api
 spec:
   interval: 5m
   sourceRef:
     kind: GitRepository
     name: flux-system
+    namespace: flux-system
   git:
     checkout:
       ref:
