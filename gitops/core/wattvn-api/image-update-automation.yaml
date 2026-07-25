@@ -20,7 +20,7 @@ spec:
       messageTemplate: |
         Automated image update
 
-        {{range .Updated.Images}}{{println .}}{{end}}
+        {{range .Changed.Images}}{{println .}}{{end}}
   update:
     path: ./gitops/core/wattvn-api
     strategy: Setters
