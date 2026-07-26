@@ -30,4 +30,4 @@ spec:
   values:
     image:
       # Auto-updated by the wattvn-api ImageUpdateAutomation - do not bump by hand.
-      tag: '8' # {"$imagepolicy": "wattvn-api:wattvn-api:tag"}
+      tag: '9' # {"$imagepolicy": "wattvn-api:wattvn-api:tag"}
