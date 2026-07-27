@@ -17,5 +17,9 @@ spec:
   healthChecks:
     - apiVersion: apps/v1
       kind: Deployment
+      name: wattvn
+      namespace: wattvn
+    - apiVersion: apps/v1
+      kind: Deployment
       name: wattvn-web
       namespace: wattvn

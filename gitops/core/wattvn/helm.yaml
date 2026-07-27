@@ -29,11 +29,7 @@ spec:
   releaseName: wattvn
   values:
     api:
-      # Kept at 0 until the DataProtection key-ring migration (Task 3) is
-      # verified (Task 4) - an API pod running before then would generate a
-      # throwaway key ring and start actively serving requests with it.
-      # Bumped to 1 only in Task 4.
-      replicaCount: 0
+      replicaCount: 1
       existingSecretName: wattvn-secrets
       image:
         # Auto-updated by the wattvn ImageUpdateAutomation - do not bump by hand.
