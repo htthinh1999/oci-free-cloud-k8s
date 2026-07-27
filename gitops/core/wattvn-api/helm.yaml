@@ -29,5 +29,12 @@ spec:
   releaseName: wattvn-api
   values:
     image:
-      # Auto-updated by the wattvn-api ImageUpdateAutomation - do not bump by hand.
-      tag: '16' # {"$imagepolicy": "wattvn-api:wattvn-api:tag"}
+      # PINNED during the wattvn-api -> wattvn migration (see
+      # docs/superpowers/plans/2026-07-27-wattvn-rename-and-frontend-deploy.md):
+      # tag 16 requires Cors:AllowedOrigin, which chart 0.2.3 (pinned above)
+      # never templated into an env var, so it crash-loops on startup with
+      # "Cors:AllowedOrigin is not configured." Marker comment intentionally
+      # removed so ImageUpdateAutomation no longer touches this value - the
+      # new gitops/core/wattvn/ release (chart 0.3.0) is the one that gets
+      # to track new image tags going forward.
+      tag: '15'
