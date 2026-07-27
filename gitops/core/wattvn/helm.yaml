@@ -1,0 +1,44 @@
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: HelmRepository
+metadata:
+  name: wattvn
+  namespace: wattvn
+spec:
+  interval: 5m
+  type: oci
+  url: oci://ghcr.io/htthinh1999/charts
+  secretRef:
+    name: ghcr-pull-secret
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: wattvn
+  namespace: wattvn
+spec:
+  interval: 10m
+  timeout: 5m
+  chart:
+    spec:
+      chart: wattvn
+      version: '0.3.0' # bumped manually when Chart.yaml's version changes
+      sourceRef:
+        kind: HelmRepository
+        name: wattvn
+      interval: 5m
+  releaseName: wattvn
+  values:
+    api:
+      # Kept at 0 until the DataProtection key-ring migration (Task 3) is
+      # verified (Task 4) - an API pod running before then would generate a
+      # throwaway key ring and start actively serving requests with it.
+      # Bumped to 1 only in Task 4.
+      replicaCount: 0
+      existingSecretName: wattvn-secrets
+      image:
+        # Auto-updated by the wattvn ImageUpdateAutomation - do not bump by hand.
+        tag: '16' # {"$imagepolicy": "wattvn:wattvn-api:tag"}
+    web:
+      image:
+        # Auto-updated by the wattvn ImageUpdateAutomation - do not bump by hand.
+        tag: '16' # {"$imagepolicy": "wattvn:wattvn-web:tag"}

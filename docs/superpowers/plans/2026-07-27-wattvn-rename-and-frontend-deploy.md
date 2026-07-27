@@ -53,13 +53,11 @@ Kustomize, `kubectl` against context `teleport.keycodemon.org-oci`.
   namespace exists yet.
 - `ghcr.io/htthinh1999/wattvn-web` is tagged by
   `.github/workflows/docker-publish.yml`'s `build-and-push-web` job with the
-  same `:latest` + `:${{ github.run_number }}` scheme as the API image. As of
-  this plan, CI run number `16` (triggered by the app repo's most recent push
-  to `main`) is building this image — **re-confirm it published successfully
-  before Task 1's commit** (`gh run view <run-id> --repo htthinh1999/wattvn
-  --json conclusion,number`, or check `kubectl get imagerepository -n wattvn
-  wattvn-web` after Task 1 reconciles); fall back to the last tag the
-  ImagePolicy actually resolves if `16` failed.
+  same `:latest` + `:${{ github.run_number }}` scheme as the API image.
+  CI run number `16` (`build-and-push-api` and `build-and-push-web`, both
+  `success`) published `ghcr.io/htthinh1999/wattvn-api:16` and
+  `ghcr.io/htthinh1999/wattvn-web:16` — confirmed via
+  `gh run view 30286834271 --json jobs` before Task 1 was executed.
 - **Naming granularity** (per approved design): only resources representing
   "the release as a whole" become bare `wattvn` — `Namespace`, top-level
   `Kustomization`, `HelmRepository`, `HelmRelease`/`releaseName`,
@@ -275,7 +273,7 @@ spec:
       existingSecretName: wattvn-secrets
       image:
         # Auto-updated by the wattvn ImageUpdateAutomation - do not bump by hand.
-        tag: '15' # {"$imagepolicy": "wattvn:wattvn-api:tag"}
+        tag: '16' # {"$imagepolicy": "wattvn:wattvn-api:tag"}
     web:
       image:
         # Auto-updated by the wattvn ImageUpdateAutomation - do not bump by hand.
