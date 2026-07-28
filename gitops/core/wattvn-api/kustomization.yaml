@@ -7,5 +7,4 @@ resources:
   - helm.yaml
   - image-policy.yaml
   - image-update-automation.yaml
-  - httproute.yaml
   - servicemonitor.yaml
