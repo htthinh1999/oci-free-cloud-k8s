@@ -19,5 +19,4 @@ resources:
   - sonarqube/flux.yaml
   - cloudnative-pg/flux.yaml
   - wattvn-postgres/flux.yaml
-  - wattvn-api/flux.yaml
   - wattvn/flux.yaml
