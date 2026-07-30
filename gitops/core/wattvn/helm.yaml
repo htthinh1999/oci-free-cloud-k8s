@@ -39,4 +39,4 @@ spec:
     web:
       image:
         # Auto-updated by the wattvn ImageUpdateAutomation - do not bump by hand.
-        tag: '17' # {"$imagepolicy": "wattvn:wattvn-web:tag"}
+        tag: '21' # {"$imagepolicy": "wattvn:wattvn-web:tag"}
