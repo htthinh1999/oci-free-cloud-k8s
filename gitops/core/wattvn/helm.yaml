@@ -34,6 +34,8 @@ spec:
       image:
         # Auto-updated by the wattvn ImageUpdateAutomation - do not bump by hand.
         tag: '18' # {"$imagepolicy": "wattvn:wattvn-api:tag"}
+      env:
+        corsAllowedOrigin: "http://localhost:5173,https://wattvn.keycodemon.org"
     web:
       image:
         # Auto-updated by the wattvn ImageUpdateAutomation - do not bump by hand.
