@@ -33,7 +33,7 @@ spec:
       existingSecretName: wattvn-secrets
       image:
         # Auto-updated by the wattvn ImageUpdateAutomation - do not bump by hand.
-        tag: '25' # {"$imagepolicy": "wattvn:wattvn-api:tag"}
+        tag: '26' # {"$imagepolicy": "wattvn:wattvn-api:tag"}
       env:
         corsAllowedOrigin: "http://localhost:5173,https://wattvn.keycodemon.org"
     web:
