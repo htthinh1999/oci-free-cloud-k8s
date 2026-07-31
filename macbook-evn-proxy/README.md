@@ -71,14 +71,16 @@ no `curl`, so execing into it fails with an opaque runtime error; the
 shell):
 
 ```bash
-kubectl exec -it deploy/wattvn -c tailscale -- curl -sS http://100.101.201.71:8080/api/cskh/user/login -o /dev/null -w '%{http_code}\n'
+kubectl exec -it deploy/wattvn -c tailscale -- wget -S --spider -T 5 http://100.101.201.71:8080/api/cskh/user/login
 ```
 
 (The deployment is named `wattvn`, not `wattvn-api` - the release name, not
 the project folder name. Double-check both the deployment and container
 names against `chart/templates/api-deployment.yaml` in the `wattvn` repo if
-this ever changes.)
+this ever changes. `curl` isn't available in this image - it only has
+BusyBox's `wget`, no `apk add curl`.)
 
-A `4xx`/`5xx` from EVN CPC's actual API (not a connection error) confirms the
-proxy is up and correctly forwarding - this is verifying reachability, not a
-real login attempt.
+An HTTP status line in the output (even a `4xx`/`5xx` from EVN CPC's actual
+API) confirms the proxy is up and correctly forwarding - this is verifying
+reachability, not a real login attempt. A `wget: ... Connection refused` or
+timeout error means the proxy (or the Mac itself) is actually unreachable.
