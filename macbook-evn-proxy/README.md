@@ -29,26 +29,55 @@ or a reboot, for as long as Docker Desktop itself is set to start on login -
 this needs to be running continuously (not started ad hoc during an outage)
 for `wattvn-api`'s automatic failover to have anything to fail over to.
 
+**`--restart unless-stopped` does not survive macOS sleep** - a sleeping
+container host still isn't reachable over Tailscale, restart policy or not.
+Prevent the Mac from sleeping while it's acting as the backup: under System
+Settings > Energy Saver (or Battery), disable sleep while plugged in, or run
+`caffeinate -s` in a background terminal for the duration. A closed lid or a
+sleeping Mac means the backup is not actually available, regardless of what
+the restart policy says - this is the single biggest way this "automatic"
+failover silently stops being automatic.
+
+Also spot-check the tailnet's Tailscale ACLs for peer-to-peer reachability
+between this MacBook and the cluster's Tailscale nodes when first setting
+this up - the tailnet is expected to have no restrictive ACLs today, but that
+hasn't been explicitly verified for this specific MacBook-to-cluster path.
+
 ## Wiring it into the cluster
 
 Once this is running and reachable from the OKE cluster over Tailscale, set
-the Helm value in the `wattvn` repo's `chart/values.yaml`:
+the Helm value as an override in **this repo's**
+[`gitops/core/wattvn/helm.yaml`](../gitops/core/wattvn/helm.yaml), in the
+`HelmRelease`'s `values:` block - not in the `wattvn` repo's
+`chart/values.yaml` directly (that's the chart's own default, and changing it
+would additionally require bumping the chart version and republishing it,
+which isn't the right path for a per-deployment operator setting like this).
+Add `evnBackupBaseUrl` alongside the existing `corsAllowedOrigin` override:
 
 ```yaml
-api:
-  env:
-    evnBackupBaseUrl: "http://100.101.201.71:8080"
+    api:
+      env:
+        corsAllowedOrigin: "http://localhost:5173,https://wattvn.keycodemon.org"
+        evnBackupBaseUrl: "http://100.101.201.71:8080"
 ```
 
 ## Verifying reachability
 
-From a pod in the `wattvn` namespace (or via `kubectl exec` into the
-`wattvn-api` container, which shares its network namespace with the
-`tailscale` sidecar):
+From a pod in the `wattvn` namespace, exec into the `tailscale` sidecar (not
+the main `wattvn-api` container - its image,
+`mcr.microsoft.com/dotnet/runtime-deps:8.0-jammy-chiseled`, has no shell and
+no `curl`, so execing into it fails with an opaque runtime error; the
+`tailscale` container shares the same pod network namespace and does have a
+shell):
 
 ```bash
-curl -sS http://100.101.201.71:8080/api/cskh/user/login -o /dev/null -w '%{http_code}\n'
+kubectl exec -it deploy/wattvn -c tailscale -- curl -sS http://100.101.201.71:8080/api/cskh/user/login -o /dev/null -w '%{http_code}\n'
 ```
+
+(The deployment is named `wattvn`, not `wattvn-api` - the release name, not
+the project folder name. Double-check both the deployment and container
+names against `chart/templates/api-deployment.yaml` in the `wattvn` repo if
+this ever changes.)
 
 A `4xx`/`5xx` from EVN CPC's actual API (not a connection error) confirms the
 proxy is up and correctly forwarding - this is verifying reachability, not a
