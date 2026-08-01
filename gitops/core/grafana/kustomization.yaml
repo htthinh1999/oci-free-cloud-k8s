@@ -23,9 +23,9 @@ configMapGenerator:
       labels:
         grafana_dashboard: "1"
         kustomize.toolkit.fluxcd.io/substitute: disabled
-  - name: wattvn-api-grafana-dashboards
+  - name: wattvn-grafana-dashboards
     files:
-      - dashboards/wattvn-api.json
+      - dashboards/wattvn.json
     options:
       labels:
         grafana_dashboard: "1"

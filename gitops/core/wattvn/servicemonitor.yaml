@@ -1,7 +1,7 @@
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
-  name: wattvn-api
+  name: wattvn
   namespace: wattvn
   labels:
     # Required for kube-prometheus-stack's Prometheus to pick this up - confirmed

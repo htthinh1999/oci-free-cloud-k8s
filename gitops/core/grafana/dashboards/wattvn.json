@@ -21,7 +21,7 @@
       }
     ]
   },
-  "description": "wattvn-api request rate/latency/errors and EVN CPC sync outcomes",
+  "description": "wattvn request rate/latency/errors and EVN CPC sync outcomes",
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
@@ -49,7 +49,7 @@
         {
           "datasource": { "type": "prometheus", "uid": "prometheus" },
           "editorMode": "code",
-          "expr": "sum by (http_route) (rate(http_server_request_duration_seconds_count{job=\"wattvn-api\"}[5m]))",
+          "expr": "sum by (http_route) (rate(http_server_request_duration_seconds_count{job=\"wattvn\"}[5m]))",
           "legendFormat": "{{http_route}}",
           "range": true,
           "refId": "A"
@@ -74,7 +74,7 @@
         {
           "datasource": { "type": "prometheus", "uid": "prometheus" },
           "editorMode": "code",
-          "expr": "sum by (http_route) (rate(http_server_request_duration_seconds_count{job=\"wattvn-api\", http_response_status_code=~\"5..\"}[5m]))",
+          "expr": "sum by (http_route) (rate(http_server_request_duration_seconds_count{job=\"wattvn\", http_response_status_code=~\"5..\"}[5m]))",
           "legendFormat": "{{http_route}}",
           "range": true,
           "refId": "A"
@@ -99,7 +99,7 @@
         {
           "datasource": { "type": "prometheus", "uid": "prometheus" },
           "editorMode": "code",
-          "expr": "histogram_quantile(0.95, sum by (http_route, le) (rate(http_server_request_duration_seconds_bucket{job=\"wattvn-api\"}[5m])))",
+          "expr": "histogram_quantile(0.95, sum by (http_route, le) (rate(http_server_request_duration_seconds_bucket{job=\"wattvn\"}[5m])))",
           "legendFormat": "{{http_route}}",
           "range": true,
           "refId": "A"
@@ -124,7 +124,7 @@
         {
           "datasource": { "type": "prometheus", "uid": "prometheus" },
           "editorMode": "code",
-          "expr": "http_server_active_requests{job=\"wattvn-api\"}",
+          "expr": "http_server_active_requests{job=\"wattvn\"}",
           "legendFormat": "active requests",
           "range": true,
           "refId": "A"
@@ -182,7 +182,7 @@
         {
           "datasource": { "type": "prometheus", "uid": "prometheus" },
           "editorMode": "code",
-          "expr": "histogram_quantile(0.95, sum by (le) (rate(http_client_request_duration_seconds_bucket{job=\"wattvn-api\", server_address=\"cskh-api.cpc.vn\"}[5m])))",
+          "expr": "histogram_quantile(0.95, sum by (le) (rate(http_client_request_duration_seconds_bucket{job=\"wattvn\", server_address=\"cskh-api.cpc.vn\"}[5m])))",
           "legendFormat": "p95",
           "range": true,
           "refId": "A"
@@ -195,7 +195,7 @@
   "refresh": "30s",
   "schemaVersion": 38,
   "style": "dark",
-  "tags": ["wattvn-api"],
+  "tags": ["wattvn"],
   "templating": { "list": [] },
   "time": {
     "from": "now-6h",
@@ -203,8 +203,8 @@
   },
   "timepicker": {},
   "timezone": "",
-  "title": "wattvn-api",
-  "uid": "wattvn-api",
+  "title": "wattvn",
+  "uid": "wattvn",
   "version": 1,
   "weekStart": ""
 }
