@@ -36,6 +36,10 @@ spec:
         tag: '45' # {"$imagepolicy": "wattvn:wattvn-api:tag"}
       env:
         corsAllowedOrigin: "http://localhost:5173,https://wattvn.keycodemon.org"
+        # Has no effect until chart version below is bumped to 0.3.4+ (that's
+        # the first version whose template actually renders this value into
+        # a Resend__FromEmail env var - see wattvn's chart/templates/api-deployment.yaml).
+        resendFromEmail: "WattVN Alerts <alerts@keycodemon.org>"
     web:
       image:
         # Auto-updated by the wattvn ImageUpdateAutomation - do not bump by hand.
