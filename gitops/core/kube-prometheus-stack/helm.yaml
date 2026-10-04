@@ -39,8 +39,15 @@ spec:
         podMonitorSelector:
           matchLabels:
             app.kubernetes.io/component: monitoring
-        retention: ""
-        retentionSize: 14GB
+        # 2 weeks of history is enough for this cluster. retention.time is the
+        # primary cap; retentionSize is kept as a backstop against an
+        # ingestion-rate spike blowing through the 15Gi PVC before the
+        # time-based cap kicks in. Previously retention was "" (unset), which
+        # disables Prometheus's own time-based default once retentionSize is
+        # set - that's why data silently went back ~46 days (size-capped at
+        # 14GB, ~267MB/day observed) instead of the ~15d most people expect.
+        retention: 14d
+        retentionSize: 6GB
         # No resources block previously (chart default is unset), even though
         # this is the heaviest real consumer on the node (~90m CPU / ~590Mi
         # observed with a 14GB TSDB). Sized from that with headroom for
