@@ -23,3 +23,17 @@ spec:
         name: envoy
       interval: 5m
   releaseName: envoy-gateway
+  values:
+    deployment:
+      envoyGateway:
+        # No resources block previously - chart default (100m CPU / 256Mi
+        # request, 1Gi limit) was unaccounted for, even though observed usage
+        # is ~73Mi. Verified key path against the chart's values.tmpl.yaml
+        # (deployment.envoyGateway.resources). Trimmed in line with every
+        # other core component in this repo.
+        resources:
+          requests:
+            cpu: 10m
+            memory: 96Mi
+          limits:
+            memory: 256Mi
