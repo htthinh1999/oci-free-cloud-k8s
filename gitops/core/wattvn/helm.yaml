@@ -21,7 +21,7 @@ spec:
   chart:
     spec:
       chart: wattvn
-      version: '0.3.5' # bumped manually when Chart.yaml's version changes
+      version: '0.3.6' # bumped manually when Chart.yaml's version changes
       sourceRef:
         kind: HelmRepository
         name: wattvn
@@ -37,6 +37,7 @@ spec:
       env:
         corsAllowedOrigin: "http://localhost:5173,https://wattvn.keycodemon.org"
         resendFromEmail: "WattVN Alerts <alerts@keycodemon.org>"
+        webPushSubject: "mailto:alerts@keycodemon.org"
     web:
       image:
         # Auto-updated by the wattvn ImageUpdateAutomation - do not bump by hand.
