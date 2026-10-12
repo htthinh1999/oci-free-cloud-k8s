@@ -38,6 +38,10 @@ spec:
         corsAllowedOrigin: "http://localhost:5173,https://wattvn.keycodemon.org"
         resendFromEmail: "WattVN Alerts <alerts@keycodemon.org>"
         webPushSubject: "mailto:alerts@keycodemon.org"
+      dataProtection:
+        persistence:
+          # chart default is longhorn, which this cluster no longer runs
+          storageClass: local-path
     web:
       image:
         # Auto-updated by the wattvn ImageUpdateAutomation - do not bump by hand.
