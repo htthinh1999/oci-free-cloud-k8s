@@ -280,7 +280,7 @@ every night (Asia/Ho_Chi_Minh):
 
 The wattvn keys encrypt the EVN credentials stored in postgres - always restore both from the same night.
 Bucket, a write-only user with an S3 (customer secret) key and the matching vault secrets are created in
-[terraform/config/modules/backup](terraform/config/modules/backup) (needs `vault_key_id` in the `*.tfvars`);
+[terraform/config/modules/backup](terraform/config/modules/backup);
 a lifecycle rule deletes objects after 14 days. Failed jobs show up through the `KubeJobFailed` alert.
 
 Run a backup now / check the last one:

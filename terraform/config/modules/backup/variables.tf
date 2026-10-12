@@ -13,11 +13,6 @@ variable "vault_id" {
   description = "The OCID of the Vault to store the S3 credentials in"
 }
 
-variable "vault_key_id" {
-  type        = string
-  description = "The OCID of the Vault master encryption key used for the secrets"
-}
-
 variable "bucket_name" {
   type        = string
   description = "Bucket the in-cluster backup CronJobs (gitops/core/backup) upload to"
