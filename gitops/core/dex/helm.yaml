@@ -75,7 +75,6 @@ spec:
           IDEnv: envoy.client-id
           secretEnv: envoy.client-secret
           redirectURIs:
-            - https://storage.keycodemon.org/oauth2/callback
             - https://prometheus.keycodemon.org/oauth2/callback
         - name: Grafana
           IDEnv: grafana.client-id

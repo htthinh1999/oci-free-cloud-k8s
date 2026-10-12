@@ -10,6 +10,7 @@ spec:
   dependsOn:
     - name: external-dns
     - name: cert-manager
+    - name: local-path-provisioner
   sourceRef:
     kind: GitRepository
     name: flux-system

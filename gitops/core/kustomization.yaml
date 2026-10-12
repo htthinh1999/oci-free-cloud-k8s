@@ -6,10 +6,10 @@ resources:
   - external-dns/flux.yaml
   - cert-manager/flux.yaml
   - cert-manager/issuer/flux.yaml
+  - local-path-provisioner/flux.yaml
   - origin-ca-issuer/flux.yaml
   - dex/flux.yaml
   - grafana/flux.yaml
-  - longhorn/flux.yaml
   - kube-prometheus-stack/flux.yaml
   - teleport/flux.yaml
   - metrics-server/flux.yaml

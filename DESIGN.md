@@ -5,7 +5,7 @@
 ## CD - Flux
 ## Secretmanagement - Vault
 ## X509 - Certmanager
-## Storage - Longhorn
+## Storage - local-path-provisioner
 ## DNS - Cloudflare
 ## Users
 ## K8s Access - Teleport

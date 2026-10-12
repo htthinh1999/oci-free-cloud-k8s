@@ -10,6 +10,7 @@ spec:
   dependsOn:
     - name: cloudnative-pg
     - name: external-secrets
+    - name: local-path-provisioner
   sourceRef:
     kind: GitRepository
     name: flux-system
