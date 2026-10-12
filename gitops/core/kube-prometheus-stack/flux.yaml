@@ -9,7 +9,7 @@ spec:
   dependsOn:
     - name: external-secrets
     - name: cert-manager
-    - name: longhorn
+    - name: local-path-provisioner
     - name: envoy-gateway
   sourceRef:
     kind: GitRepository

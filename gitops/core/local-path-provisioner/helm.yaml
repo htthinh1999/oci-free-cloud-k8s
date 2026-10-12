@@ -1,0 +1,46 @@
+# The chart isn't published to a helm repository, only in the project's git repo
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: GitRepository
+metadata:
+  name: local-path-provisioner
+spec:
+  interval: 1h
+  url: https://github.com/rancher/local-path-provisioner
+  ref:
+    tag: v0.0.37
+  ignore: |
+    /*
+    !/deploy/chart/
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: local-path-provisioner
+spec:
+  interval: 10m
+  timeout: 5m
+  chart:
+    spec:
+      chart: ./deploy/chart/local-path-provisioner
+      sourceRef:
+        kind: GitRepository
+        name: local-path-provisioner
+      interval: 5m
+  releaseName: local-path-provisioner
+  values:
+    # Single node cluster: volumes live on the node's boot volume (grown to full size by oci-growfs in
+    # terraform/infra/files/node-pool-init.sh). Nothing is replicated - replacing the node loses the data.
+    storageClass:
+      # OKE also ships `oci-bv` as default, but block volumes are min. 50GB each and would blow the free tier's 200GB
+      # (already taken by the boot volume); the newest default class wins, PVCs without a class land here
+      defaultClass: true
+    nodePathMap:
+      - node: DEFAULT_PATH_FOR_NON_LISTED_NODES
+        paths:
+          - /var/lib/local-path-provisioner
+    resources:
+      requests:
+        cpu: 5m
+        memory: 32Mi
+      limits:
+        memory: 64Mi

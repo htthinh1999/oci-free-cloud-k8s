@@ -42,6 +42,8 @@ spec:
       type: github
       localAuth: true
       secondFactor: on
+    persistence:
+      storageClassName: local-path
     highAvailability:
       replicaCount: 1
       certManager:

@@ -18,7 +18,7 @@ The free tier provides **2 oCPUs and 12GB of memory** on `VM.Standard.A1.Flex` s
 My setup runs this as a single worker node (some regions only expose one availability
 domain, so spreading across two nodes isn't always an option) with a 200GB boot volume —
 the max allowed under the Always Free block storage limit — with a good chunk of that
-available for in-cluster storage via Longhorn. For ingress, we use the `GatewayAPI` implementation
+available for in-cluster storage via `local-path-provisioner` (plain directories on the node's disk). For ingress, we use the `GatewayAPI` implementation
 provided by envoy-gateway together with Oracle’s
 Flexible Load Balancer (10Mbps; layer 7). For `teleport` we use the network LB (layer 4).
 In this configuration both load balancers are free to use.
@@ -64,7 +64,7 @@ This repo hosts my personal stuff and is a playground for my kubernetes tooling.
   * flux → github commit annotation about conciliation status
 - [x] Teleport for k8s cluster access
 - [x] Storage
-   * with longhorn
+   * with local-path-provisioner (single node, so no replication; Longhorn was dropped)
 - [x] Grafana with Dex Login
    * Dashboards for Flux
    * [ ] Switch to Grafana Operator
@@ -217,7 +217,7 @@ There's no user management in teleport, so no reset, or 2FA setup is needed.
 ### Certificates
 Two separate issuers are in play here, both managed by `cert-manager`:
 
-* **Everything behind envoy-gateway** (Grafana, Dex, Prometheus, Longhorn UI, the flux webhook) uses a
+* **Everything behind envoy-gateway** (Grafana, Dex, Prometheus, the flux webhook) uses a
   wildcard cert (`*.keycodemon.org`) issued via [Cloudflare Origin CA][cloudflare-origin-ca], through the
   [`origin-ca-issuer`](./gitops/core/origin-ca-issuer) controller (`OriginIssuer` CRD, not a `ClusterIssuer`
   — this project doesn't ship a cluster-scoped variant). This requires the DNS records for these hosts to
@@ -360,13 +360,15 @@ Now terminate that instance:
 ```
 ❯ oci compute instance terminate --force --instance-id <oidc.id>
 ```
-This triggers a node recreation. Now wait till the node is Ready; And then wait for
-longhorn to sync the volumes.
+This triggers a node recreation. Now wait till the node is Ready.
+
+:warning: Since dropping Longhorn, PVCs are `local-path` directories on the node's boot volume. With a
+single node there is nowhere to move them to, so replacing the node **wipes all PVC data** (postgres,
+teleport, prometheus). Dump what you need first.
+A quicker way to replace the single node with the new version is recreating the node pool:
 ```
-# wait until all volumes are healthy again
-❯ k get -w volumes.longhorn.io -A
+❯ terraform apply -replace=oci_containerengine_node_pool.k8s_node_pool
 ```
-Repeat the cordon/drain/terminate for the second node.
 ### OKE Upgrade 1.31.1
 For the current update, i've written above upgrade instructions.
 Worked flawlessly, though still with a bit of manual interaction in the webui...
