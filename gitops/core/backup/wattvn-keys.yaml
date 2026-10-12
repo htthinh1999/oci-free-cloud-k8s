@@ -1,0 +1,49 @@
+# nightly copy of the wattvn API's ASP.NET Data Protection key ring
+# without it the EVN credentials encrypted in postgres can't be decrypted, so it has to be restored together with the db
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: backup-wattvn-keys
+  namespace: wattvn
+spec:
+  schedule: "10 2 * * *"
+  timeZone: Asia/Ho_Chi_Minh
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 1
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      backoffLimit: 2
+      activeDeadlineSeconds: 900
+      template:
+        spec:
+          restartPolicy: Never
+          containers:
+            - name: backup
+              image: docker.io/rclone/rclone:1.75.2
+              command:
+                - sh
+                - -ec
+                - |
+                  f="/tmp/wattvn-keys-$(date -u +%Y%m%dT%H%M%SZ).tgz"
+                  tar czf "$f" -C /data --exclude=./lost+found .
+                  rclone copyto "$f" "oci:k8s-backups/wattvn-keys/$(basename "$f")"
+              envFrom:
+                - secretRef:
+                    name: k8s-backup-s3
+              volumeMounts:
+                - name: data
+                  mountPath: /data
+                  readOnly: true
+              resources:
+                requests:
+                  cpu: 10m
+                  memory: 32Mi
+                limits:
+                  memory: 128Mi
+          volumes:
+            # local-path volume (RWO) on the single node, so it can be mounted next to the running api pod
+            - name: data
+              persistentVolumeClaim:
+                claimName: wattvn-dataprotection-keys
+                readOnly: true

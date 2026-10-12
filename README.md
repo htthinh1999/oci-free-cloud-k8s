@@ -267,6 +267,39 @@ This is now no longer possible, therefore the sg is currently hardcoded.
 
 ## Monitoring
 
+## Backups
+All PVCs are `local-path` directories on the single node, so they're gone with the node. CronJobs in
+[gitops/core/backup](gitops/core/backup) upload a copy of each to the OCI Object Storage bucket `k8s-backups`
+every night (Asia/Ho_Chi_Minh):
+
+| time  | job (namespace)                         | object                                |
+|-------|-----------------------------------------|---------------------------------------|
+| 02:00 | `backup-postgres` (`wattvn-postgres`)   | `postgres/wattvn-<ts>.dump` (`pg_dump -Fc`) |
+| 02:10 | `backup-wattvn-keys` (`wattvn`)         | `wattvn-keys/wattvn-keys-<ts>.tgz`    |
+| 02:20 | `backup-teleport` (`teleport`)          | `teleport/teleport-<ts>.tgz`          |
+
+The wattvn keys encrypt the EVN credentials stored in postgres - always restore both from the same night.
+Bucket, a write-only user with an S3 (customer secret) key and the matching vault secrets are created in
+[terraform/config/modules/backup](terraform/config/modules/backup) (needs `vault_key_id` in the `*.tfvars`);
+a lifecycle rule deletes objects after 14 days. Failed jobs show up through the `KubeJobFailed` alert.
+
+Run a backup now / check the last one:
+```
+❯ k -n wattvn-postgres create job --from=cronjob/backup-postgres backup-postgres-manual
+❯ oci os object list -bn k8s-backups --prefix postgres/ --query 'data[].name'
+```
+
+Restore (stop the writer first, e.g. `k -n wattvn scale deploy wattvn --replicas=0`):
+```
+❯ oci os object get -bn k8s-backups --name postgres/wattvn-<ts>.dump --file wattvn.dump
+❯ k -n wattvn-postgres exec -i wattvn-postgres-1 -c postgres -- \
+    pg_restore --clean --if-exists --no-owner --role=wattvn -d wattvn < wattvn.dump
+
+# volumes (wattvn-keys -> PVC wattvn/wattvn-dataprotection-keys, teleport -> teleport/teleport-cluster):
+# untar into the PVC through a helper pod that mounts it, e.g.
+❯ k -n wattvn exec -i <helper-pod> -- tar xzf - -C /data < wattvn-keys-<ts>.tgz
+```
+
 # :money_with_wings: Cost
 Overview of my monthly costs:
 ![](docs/cost.25.png)

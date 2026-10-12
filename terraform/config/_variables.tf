@@ -25,6 +25,11 @@ variable "vault_id" {
   type        = string
 }
 
+variable "vault_key_id" {
+  description = "OCI Vault master encryption key OCID, used to encrypt secrets terraform writes into the vault"
+  type        = string
+}
+
 variable "tenancy_id" {
   description = "Tenancy OCID"
   type        = string

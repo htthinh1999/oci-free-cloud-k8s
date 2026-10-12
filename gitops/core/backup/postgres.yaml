@@ -1,0 +1,67 @@
+# nightly pg_dump of the wattvn database, same format as a manual `pg_dump -Fc`
+# restore: see "Backups" in the README
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: backup-postgres
+  namespace: wattvn-postgres
+spec:
+  schedule: "0 2 * * *"
+  timeZone: Asia/Ho_Chi_Minh
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 1
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      backoffLimit: 2
+      activeDeadlineSeconds: 1800
+      template:
+        spec:
+          restartPolicy: Never
+          initContainers:
+            - name: dump
+              # client major must be >= the server's (18)
+              image: ghcr.io/cloudnative-pg/postgresql:18-minimal-trixie
+              command: ["pg_dump", "-Fc", "-h", "wattvn-postgres-rw", "-d", "wattvn", "-f", "/backup/wattvn.dump"]
+              env:
+                - name: PGUSER
+                  valueFrom:
+                    secretKeyRef:
+                      name: wattvn-postgres-app-user
+                      key: username
+                - name: PGPASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      name: wattvn-postgres-app-user
+                      key: password
+              volumeMounts:
+                - name: backup
+                  mountPath: /backup
+              resources:
+                requests:
+                  cpu: 10m
+                  memory: 64Mi
+                limits:
+                  memory: 256Mi
+          containers:
+            - name: upload
+              image: docker.io/rclone/rclone:1.75.2
+              command:
+                - sh
+                - -ec
+                - rclone copyto /backup/wattvn.dump "oci:k8s-backups/postgres/wattvn-$(date -u +%Y%m%dT%H%M%SZ).dump"
+              envFrom:
+                - secretRef:
+                    name: k8s-backup-s3
+              volumeMounts:
+                - name: backup
+                  mountPath: /backup
+              resources:
+                requests:
+                  cpu: 10m
+                  memory: 64Mi
+                limits:
+                  memory: 256Mi
+          volumes:
+            - name: backup
+              emptyDir: {}
