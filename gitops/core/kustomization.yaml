@@ -19,3 +19,4 @@ resources:
   - cloudnative-pg/flux.yaml
   - wattvn-postgres/flux.yaml
   - wattvn/flux.yaml
+  - backup/flux.yaml

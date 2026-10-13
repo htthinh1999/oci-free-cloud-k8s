@@ -1,0 +1,58 @@
+# nightly copy of teleport's state (/var/lib/teleport: sqlite backend with users, roles and CA keys)
+# the sqlite dbs are copied with `sqlite3 .backup` so the copy is consistent while auth keeps running
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: backup-teleport
+  namespace: teleport
+spec:
+  schedule: "20 2 * * *"
+  timeZone: Asia/Ho_Chi_Minh
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 1
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      backoffLimit: 2
+      activeDeadlineSeconds: 900
+      template:
+        spec:
+          restartPolicy: Never
+          containers:
+            - name: backup
+              image: docker.io/rclone/rclone:1.75.2
+              command:
+                - sh
+                - -ec
+                - |
+                  apk add --no-cache sqlite >/dev/null
+                  out=/tmp/out
+                  mkdir -p "$out"
+                  cd /data
+                  # everything except the live sqlite files, the runtime socket and lost+found
+                  tar cf - --exclude='*.db' --exclude='*.db-wal' --exclude='*.db-shm' --exclude=./debug.sock --exclude=./lost+found . \
+                    | tar xf - -C "$out"
+                  find . -type f -name '*.db' | while read -r db; do
+                    mkdir -p "$out/$(dirname "$db")"
+                    sqlite3 "$db" ".backup '$out/$db'"
+                  done
+                  f="/tmp/teleport-$(date -u +%Y%m%dT%H%M%SZ).tgz"
+                  tar czf "$f" -C "$out" .
+                  rclone copyto "$f" "oci:k8s-backups/teleport/$(basename "$f")"
+              envFrom:
+                - secretRef:
+                    name: k8s-backup-s3
+              volumeMounts:
+                # read-write: sqlite needs the -shm file to read a WAL database, the job itself doesn't change anything
+                - name: data
+                  mountPath: /data
+              resources:
+                requests:
+                  cpu: 10m
+                  memory: 64Mi
+                limits:
+                  memory: 256Mi
+          volumes:
+            - name: data
+              persistentVolumeClaim:
+                claimName: teleport-cluster

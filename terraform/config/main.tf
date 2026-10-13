@@ -32,3 +32,11 @@ module "grafana" {
 
   compartment_id = var.compartment_id
 }
+
+module "backup" {
+  source = "./modules/backup"
+
+  compartment_id = var.compartment_id
+  region         = var.region
+  vault_id       = var.vault_id
+}
