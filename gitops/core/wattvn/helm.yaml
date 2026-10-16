@@ -33,7 +33,7 @@ spec:
       existingSecretName: wattvn-secrets
       image:
         # Auto-updated by the wattvn ImageUpdateAutomation - do not bump by hand.
-        tag: '64' # {"$imagepolicy": "wattvn:wattvn-api:tag"}
+        tag: '65' # {"$imagepolicy": "wattvn:wattvn-api:tag"}
       env:
         corsAllowedOrigin: "http://localhost:5173,https://wattvn.keycodemon.org"
         # Fallback EVN CPC proxy on the Raspberry Pi 5 (k3s-raspberry-pi-5-tailscale repo, apps/evn-proxy), used only
