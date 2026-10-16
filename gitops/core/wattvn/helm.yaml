@@ -36,6 +36,10 @@ spec:
         tag: '64' # {"$imagepolicy": "wattvn:wattvn-api:tag"}
       env:
         corsAllowedOrigin: "http://localhost:5173,https://wattvn.keycodemon.org"
+        # Fallback EVN CPC proxy on the Raspberry Pi 5 (k3s-raspberry-pi-5-tailscale repo, apps/evn-proxy), used only
+        # when the NUC's proxy (chart default evnBaseUrl, nuc/evn-proxy here) is unreachable. Raw Tailscale IP: the
+        # wattvn-api pod has no MagicDNS.
+        evnBackupBaseUrl: "http://100.106.85.105:30082"
         resendFromEmail: "WattVN Alerts <alerts@keycodemon.org>"
         webPushSubject: "mailto:alerts@keycodemon.org"
       dataProtection:
